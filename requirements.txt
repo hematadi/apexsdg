@@ -1,5 +1,5 @@
-streamlit==1.30.0
+datetime
+streamlit==1.38.0
 streamlit-option-menu
-mysql
+mysql-connector
 pandas
-mysql-connector-python
