@@ -10,10 +10,10 @@ import mysql.connector
 #from sqlalchemy.ext.declarative import declarative_base
 
 db_config = {
-    'host': 'srv1118.hstgr.io',
-    'user': 'u829120591_bV3z1',
-    'password': 'u829120591_bV3z1U',
-    'database': 'u829120591_4XuUf',
+    'host': '127.0.0.1',
+    'user': 'test1',
+    'password': 'test1',
+    'database': 'apexsdg',
 }
 
 conn = mysql.connector.connect(**db_config)
@@ -106,7 +106,7 @@ def main():
           college_id = st.session_state.college_id
      if college_id == 0:
           st.write("Please enter college details first on Apexsdg page")
-     if college_id != 0 : 
+     if college_id is not 0 : 
          with st.expander("Activities"):
              activity_table()
              #st.write(f"List of activities : {aclist}")
@@ -143,25 +143,24 @@ def main():
                acid = mycursor.fetchone()
                an = acid["activity_number"] ## Get activity number from acid tuple
                if an is not None:
-                   #insert into activity detail table using this an which is activity_id
-		    
-			    ac_detsql = """insert into activity_details (college_id, activity_id, from_date, to_date, outcomes, 
-	                    planning, material_availability, material_collection, list_and_role_material, aware, collaboration, 
-	                    location, checklist, steps, precautions, tools_support, learnings, village_support_new_ideas, 
-	                    final_learning, feedback, self_evaluation, notes) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
-	                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-	
-	                    item = sel_acdet[k]
-	                                  
-	                    datat = (college_id, an,item["from_date"],item["to_date"],item["outcomes"],item["planning"],item["mat_avail"], \
-	                             item["mat_collec"],item["role"],item["aware"],item["collab"],item["location"],item["checklist"], \
-	                             item["steps"],item["precautions"],item["tools_support"],item["learnings"],item["village_support"],\
-	                             item["final_learnings"],item["feedback"],item["self_evaluation"],item["notes"])
-	                    
-	                    mycursor.execute(ac_detsql, datat)
-               k += 1
-               #st.write(f"Submitted ")
-               st.switch_page("pages/thanks.py")
+	                   #insert into activity detail table using this an which is activity_id
+			st.write("Inserting into ac_details")
+			ac_detsql = """insert into activity_details (college_id, activity_id, from_date, to_date, outcomes, 
+			            planning, material_availability, material_collection, list_and_role_material, aware, collaboration, 
+			            location, checklist, steps, precautions, tools_support, learnings, village_support_new_ideas, 
+			            final_learning, feedback, self_evaluation, notes) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
+			            %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+			item = sel_acdet[k]
+			                                  
+			datat = (college_id, an,item["from_date"],item["to_date"],item["outcomes"],item["planning"],item["mat_avail"], \
+			    item["mat_collec"],item["role"],item["aware"],item["collab"],item["location"],item["checklist"], \
+			    item["steps"],item["precautions"],item["tools_support"],item["learnings"],item["village_support"],\
+			    item["final_learnings"],item["feedback"],item["self_evaluation"],item["notes"])
+			                    
+			mycursor.execute(ac_detsql, datat)
+			k += 1
+			#st.write(f"Submitted ")
+			st.switch_page("pages/thanks.py")
             
           conn.commit()
           mycursor.close()
