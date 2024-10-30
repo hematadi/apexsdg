@@ -1,56 +1,32 @@
 import calendar
 from datetime import datetime
 import streamlit as st 
-#from streamlit_option_menu import option_menu
+from streamlit_option_menu import option_menu
 import mysql.connector
 import pandas as pd
 #from sqlalchemy import create_engine
 
 db_config = {
-    'host': '127.0.0.1',
-    'user': 'test1',
-    'password': 'test1',
-    'database': 'apexsdg',
+    'host': 'srv1118.hstgr.io',
+    'user': 'u829120591_bV3z1',
+    'password': 'u829120591_bV3z1U',
+    'database': 'u829120591_4XuUf',
 }
 
 conn = mysql.connector.connect(**db_config)
 mycursor = conn.cursor(dictionary=True)
 		
-page_title = "Data entry for ECO SDG ACTIVITIES"
+page_title = "Reports for ECO SDG ACTIVITIES"
 page_icon = ":money_with_wings:"
 layout = "centered"
 
 st.set_page_config(page_title = page_title, page_icon = page_icon, layout = layout)
 st.title(page_title + " ") 
 
-sh_club_name = []
-st_names = []
+clubs = {}
 nat_day = {}
 aclist = []
-ac_det = {
-    'activity_id': ' ',
-    'from_date': ' ',
-    'to_date': ' ',
-    'outcomes' : ' ',
-    'planning' : ' ',
-    'mat_avail' : ' ',
-    'mat_collec' : ' ',
-    'role' : ' ',
-    'aware' : ' ',
-    'np_cov' : ' ',
-    'collab' : ' ',
-    'checklist' : ' ',
-    'location' : ' ',
-    'steps' : ' ',
-    'precautions' : ' ',
-    'tools_support' : ' ',
-    'learnings' : ' ',
-    'village_support' : ' ',
-    'final_learnings' : ' ',
-    'feedback' : ' ',
-    'self_eval' : ' ',
-    'notes' : ' '
-}
+global college_id
 
 def general_info(): 
   
@@ -83,20 +59,36 @@ def faculty_names():
   global faculty_names
   faculty_names = st.text_input("Faculty names, comma separated")
   
+# Function to add a new self-help club
+def add_club(club_name):
+    if club_name not in clubs:
+        clubs[club_name] = []  # Initialize with an empty list
+        #print(f"Club '{club_name}' added.")
+    else:
+        print(f"Club '{club_name}' already exists.")
 
-def student_names(shcnum):
-    
-    num_students = st.number_input("Number of students" , min_value=1, max_value=50, value=1, key=f"shclub{shcnum}")
+# Function to add a new student to a specific club
+def add_student(club_name, student_name):
+    if club_name in clubs:
+        clubs[club_name].append(student_name)  # Add student to the existing list
+        #print(f"Student '{student_name}' added to club '{club_name}'.")
+    else:
+        print(f"Club '{club_name}' does not exist.")
+        
+def student_names(shclubname, j):
+    num_students = st.number_input("Number of students" , min_value=1, max_value=50, value=1, key=f"shclubname {shclubname}{j}")
     for i in range(1, num_students + 1):
-      student_name = st.text_input(f"Student Name {i}", key = f"stname {shcnum}+{i}")
-      st_names.append(student_name)
+      student_name = st.text_input(f"Student Name {i}", key = f"stname {shclubname}{i}{j}")
+      #st_names.append(student_name)
+      add_student(shclubname, student_name)
     
 def shclubnames(): 
    num_shclubs = st.number_input("Number of self help clubs" , min_value=1, max_value=50, value=1)
    for j in range(1, num_shclubs+1):
      shclubname = st.text_input(f"Self help club name {j}" , key = f"shclub {j}")
-     sh_club_name.append(shclubname)
-     student_names(j)
+     #sh_club_name.append(shclubname)
+     add_club(shclubname)
+     student_names(shclubname, j)
 
 
 def main(): 
@@ -117,21 +109,22 @@ def main():
     submitted = st.button("Submit")
     
     if submitted: 
-     college_sql = "insert into college_info (college_name, district, state, website, head_name, fb_link, yt_link, total_participants, total_strength, dignitaries, date) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
+     college_sql = "insert into college_info (college_name, district, state, website, head_name, fb_link, yt_link, \
+      total_participants, total_strength, dignitaries, date) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"
      values = (college_name, district, state, website, head_name, fb_link, yt_link, int(total_participants), int(total_strength), dignitaries, date)
-     st.write(f"Sql {college_sql}")
-     st.write(f"Sql {values}")
+     #st.write(f"Sql {college_sql}")
+     #st.write(f"Sql {values}")
 
      mycursor.execute(college_sql, values)
      
      conn.commit()
-
+     #select the id of the last inserted row, works beautifully for the session. 
      mycursor.execute("select last_insert_id()")
      id = mycursor.fetchone()
      
      if id is not None: 
        college_id = id['last_insert_id()']
-       st.write(f"My id is {college_id}")
+       #st.write(f"My id is {college_id}")
        #Tuple is of this form -  {'last_insert_id()': 28}
      
      #Insert into national_international_day
@@ -141,14 +134,24 @@ def main():
         nat_sql = "insert into national_international_days (college_id, national_international_day, date) values (%s, %s, %s);"
         nvalues = (college_id, natdayname, natdaydate)
         mycursor.execute(nat_sql, nvalues)
-        st.write(f"My nat sql - {nat_sql} ")
-        st.write(f"My nat values - {college_id} , {natdayname} , {natdaydate} ")
+        #st.write(f"My nat sql - {nat_sql} ")
+        #st.write(f"My nat values - {college_id} , {natdayname} , {natdaydate} ")
         conn.commit()
 
+     #Insert into students info
+     for club, students in clubs.items():
+      # shname, stnamel = row
+       #print(f"{club}: {', '.join(students)}")
+       #for item in stnamel:
+        stnames1 = ",".join(students)
+        print(f"Students = {stnames1}")
+       
      mycursor.close()
      conn.close()
-     st.write(f"Thank you for using Apexsdg app. Your college id is {college_id}")
-
+     #st.balloons()
+     #st.success(f"College id - {college_id}")
+     st.session_state.college_id = college_id
+     st.switch_page("pages/Activity.py")
+     
 if __name__ == "__main__":
     main()
-
