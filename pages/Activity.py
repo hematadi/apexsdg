@@ -144,21 +144,21 @@ def main():
                an = acid["activity_number"] ## Get activity number from acid tuple
                if an is not None:
                    #insert into activity detail table using this an which is activity_id
-		    st.write("Inserting into ac_details")
-                    ac_detsql = """insert into activity_details (college_id, activity_id, from_date, to_date, outcomes, 
-                    planning, material_availability, material_collection, list_and_role_material, aware, collaboration, 
-                    location, checklist, steps, precautions, tools_support, learnings, village_support_new_ideas, 
-                    final_learning, feedback, self_evaluation, notes) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
-
-                    item = sel_acdet[k]
-                                  
-                    datat = (college_id, an,item["from_date"],item["to_date"],item["outcomes"],item["planning"],item["mat_avail"], \
-                             item["mat_collec"],item["role"],item["aware"],item["collab"],item["location"],item["checklist"], \
-                             item["steps"],item["precautions"],item["tools_support"],item["learnings"],item["village_support"],\
-                             item["final_learnings"],item["feedback"],item["self_evaluation"],item["notes"])
-                    
-                    mycursor.execute(ac_detsql, datat)
+		    
+			    ac_detsql = """insert into activity_details (college_id, activity_id, from_date, to_date, outcomes, 
+	                    planning, material_availability, material_collection, list_and_role_material, aware, collaboration, 
+	                    location, checklist, steps, precautions, tools_support, learnings, village_support_new_ideas, 
+	                    final_learning, feedback, self_evaluation, notes) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
+	                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""
+	
+	                    item = sel_acdet[k]
+	                                  
+	                    datat = (college_id, an,item["from_date"],item["to_date"],item["outcomes"],item["planning"],item["mat_avail"], \
+	                             item["mat_collec"],item["role"],item["aware"],item["collab"],item["location"],item["checklist"], \
+	                             item["steps"],item["precautions"],item["tools_support"],item["learnings"],item["village_support"],\
+	                             item["final_learnings"],item["feedback"],item["self_evaluation"],item["notes"])
+	                    
+	                    mycursor.execute(ac_detsql, datat)
                k += 1
                #st.write(f"Submitted ")
                st.switch_page("pages/thanks.py")
