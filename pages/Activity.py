@@ -161,7 +161,7 @@ def main():
                     mycursor.execute(ac_detsql, datat)
                k += 1
                #st.write(f"Submitted ")
-               st.switch_page("pages/thanks.py")
+               #st.switch_page("pages/thanks.py")
             
           conn.commit()
           mycursor.close()
