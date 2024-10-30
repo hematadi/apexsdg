@@ -144,6 +144,7 @@ def main():
                an = acid["activity_number"] ## Get activity number from acid tuple
                if an is not None:
                    #insert into activity detail table using this an which is activity_id
+		    st.write("Inserting into ac_details")
                     ac_detsql = """insert into activity_details (college_id, activity_id, from_date, to_date, outcomes, 
                     planning, material_availability, material_collection, list_and_role_material, aware, collaboration, 
                     location, checklist, steps, precautions, tools_support, learnings, village_support_new_ideas, 
