@@ -106,7 +106,7 @@ def main():
           college_id = st.session_state.college_id
      if college_id == 0:
           st.write("Please enter college details first on Apexsdg page")
-     if college_id is not 0 : 
+     if college_id != 0 : 
          with st.expander("Activities"):
              activity_table()
              #st.write(f"List of activities : {aclist}")
